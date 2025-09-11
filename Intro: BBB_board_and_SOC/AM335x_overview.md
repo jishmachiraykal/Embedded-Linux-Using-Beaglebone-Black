@@ -2,6 +2,8 @@
 
 * More details about A335x in https://www.ti.com/product/AM3358
 
+* Technical reference manual(TRM) for this SOC can be found in https://www.ti.com/lit/ug/spruh73q/spruh73q.pdf?ts=1757495289153&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FAM3358
+
 * This SOC is placed in the middle of the board with partnumber starting with A3358BZCZ100
 
 * Using SOC we can mount any controller without any problem because those controller will already be there on the SOC
