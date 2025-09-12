@@ -19,13 +19,13 @@
 * When USB to serial converter is connected, you can do dmesg in terminal and see which tty port it has connected and other details like shown below:
 ```
     usbcore: registered new interface driver usbserial_generic
-    [    8.098671] usbserial: USB Serial support registered for generic
-    [    8.104804] usbcore: registered new interface driver ftdi_sio
-    [    8.104817] usbserial: USB Serial support registered for FTDI USB Serial Device
-    [    8.104851] ftdi_sio 2-2:1.0: FTDI USB Serial Device converter detected
-    [    8.104886] usb 2-2: Detected FT232RL
-    [    8.129768] sisevt: FTrace sisevt_hook_syscalls_64 ret(0)
-    [    8.130895] usb 2-2: FTDI USB Serial Device converter now attached to ttyUSB0
+    usbserial: USB Serial support registered for generic
+    usbcore: registered new interface driver ftdi_sio
+    usbserial: USB Serial support registered for FTDI USB Serial Device
+    ftdi_sio 2-2:1.0: FTDI USB Serial Device converter detected
+    usb 2-2: Detected FT232RL
+    sisevt: FTrace sisevt_hook_syscalls_64 ret(0)
+    usb 2-2: FTDI USB Serial Device converter now attached to ttyUSB0
 ```
 
 * When using the minicom, if something is not working then first check serial port setup. For that ctrl A-Z, option O go to serial port setup, change hw control flow and sw control flow to NO if it is set to YES because BBB does not use any serial
@@ -33,6 +33,10 @@
 * Baud Rate option in serial port setup ex: Bps/Par/Bits       : 115200 8N1 means baud rate is 115200, No parity and stop bit is 1
 
 * save as dfl option in minicom sets the default value so that we need not to configure evrytime the same data
+
+* After opening the minicom, run ifconfig to get the interfaces and check the IP address of USB0 or any port connected. Try to ping the IP address from another host terminal, n/w should be reachable
+
+* ssh to target using ssh -l debian IP_address
 
 * BBB comes with debian flavor of Linux OS.
 
