@@ -131,3 +131,41 @@
 * We need to partition the micro SD card into 2, one is BOOT of FAT file system and other one is RFS of type EXT3/4
 
 * Once the SD is connected to the board dmesg will show the message related to SD card connected and its product details. Open the gparted application in apps and look for SD device location at the top right corner. This is very important for partition. Ex: /dev/sda2
+
+* Creating first file system: open gparted application right click on unallocated then select new give new size around 1000 MB label and click on add. To add the flags click on newly created partition and select flags add the flags such as boot in this case. Likewise add 2 partions for root and rootfs. After partition is created copy the MLO image downloaded from https://github.com/niekiran/EmbeddedLinuxBBB/blob/master/pre-built-images/Angstrom_Demo/MLO-beaglebone-2013.04 to root partition. SD card will be in /media/hjz1kor/partition_name. In the partion MLO image name should be just MLO because bootloader will look only for that.
+
+* Booting process of MLO from SD card is as follows:
+   1. Put the board into power down mode by doing a long press on power button(S3). Press and hold it untill all LED's turns off
+   2. Press and hold boot button(S2)
+   3. Gently press and release the power button
+   4. Release the boot button
+
+* Open and check in minicom for the bootlogs of MLO. Here MLO will be calling u-boot.img i.e, next stage bootloader
+
+* Next is to test the booting of u-boot image. To download u-boot image go to https://github.com/niekiran/EmbeddedLinuxBBB/blob/master/pre-built-images/Angstrom_Demo/u-boot-beaglebone-2013.04-r0.img and place it in workspace downloads folder. Then copy it to root partition in the name of u-boot.img. Because SPL will look for this specific filename. Now press S2 button and give power. This will try to find the linux image
+
+* The job of u-boot
+   1. Initializes some of the peripherals like I2C, NAND, FLASH, ETHERNET, UART, USB, MMC because it supports loading kernel from all these peripherals
+   2. Load the Linux kernel image from various sources to the DDR memory of the board.
+   3. Boot sources: NAND, FLASH, ETHERNET, UART, USB, eMMC, serial port etc...
+   4. Passing of boot arguments to the kernel
+
+* We can pass uEnv.txt file which contains environment variables values fo the u-boot which directs u-boot how to behaviour. Any default behaviour can be overwritten using the file. U-boot looks for zimage(elf) + 64 bytes of u-boot image header. From image header u-boot gets lots of info about Linux kernel
+
+* Pre-built linux kernel image can be found from https://github.com/niekiran/EmbeddedLinuxBBB/blob/master/pre-built-images/Angstrom_Demo/Angstrom-systemd-image-eglibc-ipk-v2012.12-beagleboard.rootfs.tar.xz. After extracting under boot dir, there will be linux kernel images. All the extracted folders should be placed in rootfs partition
+
+* Since u-boot.img will be in root partition, it will have no idea where the Linux kernel image is. To resolve this we need to use uEnv.txt to tell u-boot where Linux kernel image is. mmcboot=echo Booting from microSD ...; setenv autoload no ; load mmc 0:1 ${loadaddr} uImage ; using load command trying to load uImage from current directory to ${loadaddr}. ${loadaddr} is the address of Linux kernel
+
+* SD card can be unmounted using umount /media/username/boot in the terminal. Then connect the board to PC and boot using SD card. Now you will get the login terminal. bootm ${loadaddr} - ${fdtaddr}. bootm is the place where u-boot hangs and passees the control to Linux kernel. In the bootlogs it displays the image information
+
+* There is a C file which is responsible for uncompressing of Linux kernel images
+
+* Reading u-boot header information of uImage manually
+    1. Load the uImage from memory device(SD card) into the DDR memory of the  board
+    2. Use the memory dump command of u-boot to dump header information
+
+* Go to u-boot prompt, run "load mmc 0:2 0x82000000 boot/uImage" --> mmc is the interface 0 is the SD card 2 is the second partition where uImage is present 0x82000000 is the DDR address. Once the command is run some bytes of memory will be loaded to DDR memory
+
+* Next in u-boot prompt, md 0x82000000 4 // gives the value of first 4 header in little endian format i.e., magic number, checksum, image creation timestamp and size of the image etc... total 64 bytes of data. That's how we can check image information using u-boot command by RAM dumping. md is the command to do the RAM dumping. imi command gives the information about application image
+
+* To load a fat based file system into memory use, fatload else use load

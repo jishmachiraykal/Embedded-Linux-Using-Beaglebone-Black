@@ -36,7 +36,7 @@
 
 * After opening the minicom, run ifconfig to get the interfaces and check the IP address of USB0 or any port connected. Try to ping the IP address from another host terminal, n/w should be reachable
 
-* ssh to target using ssh -l debian IP_address
+* ssh to target using ssh -l debian IP_address/ ssh debian@IP_Address
 
 * BBB comes with debian flavor of Linux OS.
 
