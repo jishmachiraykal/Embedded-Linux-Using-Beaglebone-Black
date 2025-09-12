@@ -47,9 +47,47 @@
 
 * That is, let’s say, if SYSBOOT[4:0] = 00011b, then boot order will be UART0,SPI0.XIP,MMC0 ( look at the table please !!! ) So, we can say that, The SYSBOOT pins configure the boot device order (set by SYSBOOT[4:0]).Some board, will give you the control to change the SYSBOOT[15:0] value by using dip switches
 
-----------------Add next steps
+* SYS_BOOT2 is connected to a button S2 of the BBBB ( S2 is the boot button ). When you simply give power to the board, You will find the voltage level as below.
+
+   SYS_BOOT0 = 0V
+
+   SYS_BOOT1 = 0V
+
+   SYS_BOOT2 =1V
+
+   SYS_BOOT3 = 1V
+
+   SYS_BOOT4 = 1V
+
+* If you have Multimeter, measure the voltage of 45,44,43,41,40 pins of the expansion header P8 of the board you will find SYSBOOT[4:0] = 11100.when you press the button S2, SYS_BOOT2 will be grounded , so SYSBOOT[4:0]= 11000. Great! Now based on S2 (BBB boot button) we got 2 boot configurations
+
+* 1) S2 Released (SYSBOOT[4:0] = 11100)
+
+   The boot order will be
+
+   MMC1 (eMMC)
+   MMC0 (SD card)
+   UART0
+   USB0
+   2) S2 pressed (SYSBOOT[4:0] = 11000) , The boot order will be
+
+   SPI0
+   MMC0 (SD card)
+   USB0
+   UART0
+   So, to conclude, there are 5 boot sources supported for this board including SPI
+
+* 1) eMMC Boot(MMC1) :eMMC is connected over MMC1 interface, This is the fastest boot mode possible, eMMC is right there on your board, so need not to purchase any external components or memory chip. This is the default boot mode. As soon as you reset the board, the board start booting from loading the images stored in the eMMC. If no proper boot image is found in the eMMC, then Processor will automatically try to boot from the next device on the list
+
+* 2) SD Boot : If the default ( that is booting from eMMC) boot mode fails, then it will try to boot from the SD card you connected to the sd card connector at MMC0 interface. If you press S2 and then apply the power, then the board will try to boot from the SPI first, and if nothing is connected to SPI, it will try to boot from the MMC0 where our SD card is found. Also remember that we can use SD card boot to flash boot images on the eMMC. So if you want to write new images on the eMMC  then you can boot through sd card, then write new images to eMMC, then reset the board, so that your board can boot using new images stored in the eMMC
+
+* 3) Serial boot : In this mode, the ROM code of the SOC will try to download the boot images from the serial port
+
+* 4) USB BOOT :You may be familiar with this boot mode, that is booting through usb stick
 
 * Boot sequence of RBL
+
+* ROM code booting procedure can be found in 5029 of TRM: https://www.ti.com/lit/ug/spruh73q/spruh73q.pdf?ts=1757495289153&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FAM3358
 
 * Size of ROM in SOC is 176 KB, when board is powered on RBL will be the first component to run on the SOC. First it does the stack setup and calls the main(). It initializes the watchdog timer for approx. 3 minutes i.e., RBL couldn't able to load the SPL within 3 minutes watchdog timer will expire and reset the processor. Then setting the clock using PLL(Phase log loop), it is a clock generating engine using which we can generate wide range of clock frequencies for wide range of subsystems of the SOC. For PLL we need to give low frequescy oscillator like crystal oscillator, RC oscillator etc which in turn gives high frequency which can be used to run subsystem like display, processor, USB. 24 MHz(In-built value, look at the back side of the board Y2) ->  800 MHz
 
