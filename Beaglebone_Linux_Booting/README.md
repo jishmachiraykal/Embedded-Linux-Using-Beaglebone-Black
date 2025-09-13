@@ -158,7 +158,7 @@
 
 * SD card can be unmounted using umount /media/username/boot in the terminal. Then connect the board to PC and boot using SD card. Now you will get the login terminal. bootm ${loadaddr} - ${fdtaddr}. bootm is the place where u-boot hangs and passees the control to Linux kernel. In the bootlogs it displays the image information
 
-* There is a C file which is responsible for uncompressing of Linux kernel images
+* There is a C file which is responsible for decompressing of Linux kernel images
 
 * Reading u-boot header information of uImage manually
     1. Load the uImage from memory device(SD card) into the DDR memory of the  board
@@ -169,3 +169,45 @@
 * Next in u-boot prompt, md 0x82000000 4 // gives the value of first 4 header in little endian format i.e., magic number, checksum, image creation timestamp and size of the image etc... total 64 bytes of data. That's how we can check image information using u-boot command by RAM dumping. md is the command to do the RAM dumping. imi command gives the information about application image
 
 * To load a fat based file system into memory use, fatload else use load
+
+* Boot sequence of Linux kernel
+
+* Linux kernel gets control from u-boot. u-boot handsover the control to head.s of the Linux boot starp loader. head.s calls misc.c(miscelleneous) which is also inside Linux boot strap loader used for umcompressing the compressed files.Then the control comes to the another head.s of Linux kernel. Then from head.d --> head_common.c --> main.c. From main.c control goes to first application of Linux i., INIT is launched
+
+* How u-boot hands-off control to the boot strap loader of the Linux kernel? Let's explore the bootm.c file of u-boot source code.u-boot source code can be downloaded from https://ftp.denx.de/pub/u-boot/ (u-boot-2017.05-rc2). bootm.c can be found in rch/arm/lib/bootm.c location. This is the place where code to read the Linux kernel from memory verify the checksum, handing off control is implemented
+
+* There is a boot_jump_linux(bootm_headers_t *images, int flag) function in the bootm.c file, in that there is a kernel entry funtion pointer. This is pointed to kernel_entry = (void (*)(void *fdt_addr, void *res0, void *res1, void *res2))images->ep; Here images->ep is the entry point address of Linux kernel which is assigned to kernel_entry. Next is r2 = (unsigned long)images->ft_addr; ft_addr is holding the RAM address at which "Device tree binary" is present in the DDR memory. This is assigned to a variable called r2.
+
+* kernel_entry(0, machid, r2);; This code hands of control to the Linux. The entry point address is dereferenced. 0 is ignored by Linux. machid is the machine id of the board sent by u-boot to Linux. Passed to Linux via register r1. r2 is the ftd address stored in the DDR memory. This is where u-boot handing over control to Linux kernel
+
+* This file(bootm.c) calls start routine in head.s of boot strap loader.
+
+* Linux source code can be found in https://github.com/beagleboard/linux. head.s will be under arch/arm/boot/compressed/head.s. Search for start: routine from where the control comes to Linux kernel. mov r7, r1 saves the architecture ID/machine ID and mov r2,r8 saved the DTB address. This can be seen here kernel_entry(0, machid, r2) mchid is r1 and r2. Next go to arch/arm/boot/compressed/misc.c, search for decompress_kernel. In this function you can find Uncompressing kernel message same thing can be found in boot logs also
+
+* Now control comes to Linux kernel from Linux boot starp loader and goes to another head.s located in arch/arm/kernel/compressed/head.s. This is a general arm specific code and does:
+   1. CPU specific intialization
+   2. Checks valid processor architecture
+   3. Page table inits
+   4. Initialize and prepare MMU for the identified processor architecture
+   5. Enable MMU to supprt for virtual memory
+   6. Calls start_kernel function of the main.c (Arch independent code)
+
+* Both the head.s files are architectute(ARM) dependent
+
+* head.s in Linux kernel will first check for proper processor type of the board. After knowing this, it will calls the processor specific initialization routines found in the respective processor specific files i.e., arch/arm/mm/proc**. All the processor specific calls made to initialize the MMU before turning it on. That means before giving the control to Linux generic code, MMU initialization and turining off/on MMU is must that is the duty of the architecture specific codes.
+
+* start_kernel() is called from head_common.s located in the arch/arm/boot/compressed/head.s. From here flows come to the main.c of the Linux kernel
+
+* Launch of INIT
+
+* main.c is architecture independent generic file found in Init/main.c. Entry point for the main.c is start_kernel(). pr_notice("%s", linux_banner) prints the Linux version, compiler version, processor type, build number etc. linux_banner can be found in the version file under Init. start_kernel() does lots of operations such as mm initialization, schedule initialization, timer initialization, high resolution timer initialization before launching the very first application of the linux kernel
+
+* At the end it calls a function called rest_init(). This lanuches the init function, it calls 2 threads kernel_thread(kernel_init, NULL, CLONE_FS), second one is kernel_thread(kthreadd, NULL, CLONE_FS | CLONE_FILES). Then it is starting the scheduler and then kernel is going to CPU idle loop. This is an infinite loop i.e., while(1){}. schedule_preemt_disabled(); cpu_startup_entry(CPUHP_ONELINE);
+
+* kernel_thread(kernel_init, NULL, CLONE_FS) is a kernel thread used to execute/generate very first user application INIT. kernel_thread(kthreadd, NULL, CLONE_FS | CLONE_FILES) is also another kernel thread which is used to execute/generate other kernel threads
+
+* Inside kernel_thread(kernel_init, NULL, CLONE_FS) function, the code free_initmem() reclaims the memory used by intialization function because those functions are no longer needed and no one going to call them. Can be seen in bootlogs with "Free init memory: 248K" clearing the RAM which can be used for other purposes
+
+* Then the kernel_thread(kernel_init, NULL, CLONE_FS) function calls the init function try_to_run_init_process("/sbin/init") || if that fails try_to_run_init_process("/etc/init"), if this also fails then calls try_to_run_init_process("/bin/init"), last and next try_to_run_init_process("/bin/sh")
+
+* Finally it lanches first user application init. If not found at least it will lauch shell application try_to_run_init_process("/bin/sh"). INIT is responsible for lauching other applications. PID number of the INIT program is 1. Busybox is not a bootloader. u-boot,grub,barebox are bootloaders.
