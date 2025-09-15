@@ -158,6 +158,8 @@
 
 * SD card can be unmounted using umount /media/username/boot in the terminal. Then connect the board to PC and boot using SD card. Now you will get the login terminal. bootm ${loadaddr} - ${fdtaddr}. bootm is the place where u-boot hangs and passees the control to Linux kernel. In the bootlogs it displays the image information
 
+* To assign, sudo mkfs.ext4 /dev/sdc1(Linux). sudo mkfs.vfat /dev/sdc2(windows)
+
 * There is a C file which is responsible for decompressing of Linux kernel images
 
 * Reading u-boot header information of uImage manually
