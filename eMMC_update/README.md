@@ -9,7 +9,7 @@
 
 * Flashing takes 5-10 minutes. Once it is done SD card can be removed from board and BBB will boot from eMMC. This has to be done whenever beaglebone.org releases new version
 
-* Flasher script will devide the eMMC memory into two partitions called BOOT and ROOTFS. Then it will format the partitions to create file system(FAT & EXT4). Then copy the contents of SD card into newly created partions
+* Flasher script will divide the eMMC memory into two partitions called BOOT and ROOTFS. Then it will format the partitions to create file system(FAT & EXT4). Then copy the contents of SD card into newly created partions
 
 * Check the debian OS image using lsb-release -da and latest version will be in https://www.beagleboard.org/distros
 
