@@ -19,7 +19,7 @@
 
 * Now power off the board and boot from SD card usinf S2 button. Once the boot is over, we can see devive enumenration in the PC i.e., we can see the device connected to the drive in the file explorer
 
-* The board will be booted from SD card, now the contents has to written to eMMC. To do that go to /opt/script/tools/eMMC. Run init-eMMC-flahser-V3.sh. Flashing will start and LED pattern on BBB will change now. After flashing, board will go to power down mode. LEDs are off and remove the SD card and press power button board will boot from eMMC
+* The board will be booted from SD card, now the contents has to written to eMMC. To do that go to /opt/script/tools/eMMC/opt/scripts/tools/eMMC. Run init-eMMC-flasher-v3.sh. Flashing will start and LED pattern on BBB will change now. After flashing, board will go to power down mode. LEDs are off and remove the SD card and press power button board will boot from eMMC
 
 * Connect to board via ssh or minicom
 
