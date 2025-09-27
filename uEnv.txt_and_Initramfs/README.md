@@ -1,3 +1,5 @@
+* uEnv.txt is used to set the values of the u-boot environment variables and also to define new environment variable and initialize values. fat32  is not a RAM/ROM based file system
+
 * Reset the board, so the board will boot from eMMC and halt at u-boot so that u-boot prompt will open. In the u-boot command prompt type help it will show all the operations it performs
 
 * If u-boot prompt is not working, then hold the space bar and hit the reset button. u-boot prompt will be entered and type boot to go back to normal boot prompt
