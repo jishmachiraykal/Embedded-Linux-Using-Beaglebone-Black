@@ -28,6 +28,8 @@ sudo ./build-am335x.sh
 
 ### Configuring and generating SPL,MLO and u-boot images
 
+* Compilation steps cab be found from https://github.com/niekiran/EmbeddedLinuxBBB/blob/master/notes/compilation_commands#L11
+
 * distclean will delete all the previously compiled/generated object files. Don't give full name for cross compiler, it will take by itself
 ```
 make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- distclean
@@ -56,5 +58,3 @@ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -j4 // 4 core machine will inst
 ```
 
 * U-boot will generate spl image(under spl directory), MLO(root folder of u-boot source code) and u-boot.img(root folder of u-boot source code)
-
-* Compilation steps cab be found from https://github.com/niekiran/EmbeddedLinuxBBB/blob/master/notes/compilation_commands

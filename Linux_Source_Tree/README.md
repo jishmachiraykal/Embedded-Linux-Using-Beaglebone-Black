@@ -20,6 +20,8 @@
 
 ### Configuring and generating Linux image
 
+* Steps can also be found in https://github.com/niekiran/EmbeddedLinuxBBB/blob/master/notes/compilation_commands#L34
+
 * Step 1: make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- distclean
 
 * Step 2: make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- omap2plus_defconfig (4.11)
@@ -45,6 +47,8 @@ for 4.4 use omap2plus_defconfig. .config will be created and should not edit the
 
 * Step 5: ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -j4 modules //generate loadable kernel modules and generates .ko files
 
-* Step 6: make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- INSTALL_MOD_PATH=<path of the RFS>(/media/user/rootfs) modules_install . Installs all the modules which has to be transfered to RFS
+* Step 6: make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- INSTALL_MOD_PATH=<path of the RFS> modules_install(path of the RFS obtained from busybox build. Don't execute now if its not generated). Installs all the modules which has to be transfered to RFS
 
 * Cross toolchain is used on the host to generate binary for target processor architecture.Every SOC doesn't require SPL/MLO, its TI specific. mkImage tool is used to u-boot header for a image
+
+* Note: If there is any "no such file or directory" error for gmp.h and mpc.h try to install development packages like sudo apt-get install libgmp-dev and sudo apt-get install libmpc-dev respectively

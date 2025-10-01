@@ -132,7 +132,7 @@
 
 * Once the SD is connected to the board dmesg will show the message related to SD card connected and its product details. Open the gparted application in apps and look for SD device location at the top right corner. This is very important for partition. Ex: /dev/sda2
 
-* Creating first file system: open gparted application right click on unallocated then select new give new size around 1000 MB label and click on add. To add the flags click on newly created partition and select flags add the flags such as boot in this case. Likewise add 2 partions for root and rootfs. After partition is created copy the MLO image downloaded from https://github.com/niekiran/EmbeddedLinuxBBB/blob/master/pre-built-images/Angstrom_Demo/MLO-beaglebone-2013.04 to root partition. SD card will be in /media/hjz1kor/partition_name. In the partion MLO image name should be just MLO because bootloader will look only for that.
+* Creating first file system: open gparted application right click on unallocated then select new give new size around 1000 MB label and click on add. To add the flags click on newly created partition and select flags add the flags such as boot in this case. Likewise add 2 partions for root and rootfs. After partition is created copy the MLO image downloaded from https://github.com/niekiran/EmbeddedLinuxBBB/blob/master/pre-built-images/Angstrom_Demo/MLO-beaglebone-2013.04 to root partition. SD card will be in /media/user/partition_name. In the partion MLO image name should be just MLO because bootloader will look only for that.
 
 * Booting process of MLO from SD card is as follows:
    1. Put the board into power down mode by doing a long press on power button(S3). Press and hold it untill all LED's turns off
