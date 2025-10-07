@@ -82,4 +82,4 @@ kernel/drivers/net/usb/cdc_ether.ko: kernel/drivers/net/usb/usbnet.ko kernel/dri
 
 * Also copy linux-5.10.168-ti-rt-r76/arch/arm/boot/uImage and linux-5.10.168-ti-rt-r76/arch/arm/boot/dts/am335x-boneblack.dtb to compiled_bins directory
 
-* Keep the MLO and u-boot.img in the SD card. Load the uImage from the hostPC using TFTP protocol and mount RFS using NFS protocol
+* Keep the MLO and u-boot.img in the SD card. Load the uImage from the hostPC using TFTP protocol and mount RFS using NFS protocol. We should also keep uEnv.txt in the SD card to load uImage and dtb using TFTP protocol. Also mountRFS using NFS protocol
