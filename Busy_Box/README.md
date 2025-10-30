@@ -83,3 +83,20 @@ kernel/drivers/net/usb/cdc_ether.ko: kernel/drivers/net/usb/usbnet.ko kernel/dri
 * Also copy linux-5.10.168-ti-rt-r76/arch/arm/boot/uImage and linux-5.10.168-ti-rt-r76/arch/arm/boot/dts/am335x-boneblack.dtb to compiled_bins directory
 
 * Keep the MLO and u-boot.img in the SD card. Load the uImage from the hostPC using TFTP protocol and mount RFS using NFS protocol. We should also keep uEnv.txt in the SD card to load uImage and dtb using TFTP protocol. Also mountRFS using NFS protocol
+
+* Create a uEnv-nfs.txt file under compiled binaries folder and copy it to SD card as uEnv.txt(not uEnv-nfs.txt). Now in SD card, BOOT will have MLO, u-boot.img and uEnv.txt files
+
+* Transfer uImage to /var/lib/tftp folder and create a folder under srv(under root dir) called nfs, and  under nfs create folder called bbb with sudo. In this location we have to copy all the RFS contents. Copy everything from rfs_static folder to bbb folder here
+
+* Now open the file /etc/exports, this file grants access to various hosts or nfs clients to access the nfs based file system. In this file we have to add an entry "srv/nfs/bbb 192.168.7.2(rw,sync,no_root_squash,no_subtree_check)" Here 192.168.7.2 is the BBB IP address(address of nfs client). Save with sudo
+
+* For nfs mounting, we have to run the below commands
+```
+sudo exportfs -a // run man exports to see what exports does
+sudo exportfs -rv
+sudo service nfs-kernel-server restart //starting the nfs service
+```
+
+* Execute sudo service nfs-kernel-server to check the status of nfs service. Remove SD card and connect SD card to BBB and boot from SD card. Now open minicom to see the logs
+
+
