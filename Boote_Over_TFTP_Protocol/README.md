@@ -26,7 +26,7 @@
     $ sudo chown tftp:tftp /var/lib/tftpboot
     $ sudo chmod -R 777 /var/lib/tftpboot
 
-6. Now we can start the TFTP daemon using $ sudo systemctl start tftpd-hpa
+6. Now we can start the TFTP daemon using $sudo systemctl start tftpd-hpa
 
 ### Testing TFTP boot on board
 
@@ -40,7 +40,7 @@ setenv serverip 192.168.27.1(server IP address obtained from ethernet interface 
 setenv ipaddr 192.168.27.2(client IP address)
 ```
 
-* Ping from target to host
+* Ping from target to host i.e, ping 192.168.27.1 in u-boot prompt and it should say host is alive
 
 * Now get the u-boot image from TFTP. Asking u-boot to fetch the Linux kernel image. And also set boot args in the u-boot prompt
 ```
