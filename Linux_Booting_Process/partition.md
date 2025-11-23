@@ -15,6 +15,8 @@ There are 2 ways to create partition
 
 * Rename the partitions using sudo e2label /dev/sdX1 NewLabel for Linux ext partition and sudo fatlabel /dev/sdX1 NewLabel for FAT file. Status can be checked in sudo e2label /dev/sdX1
 
+* BOOT partition should be partition1 and ROOTFS should be partition 2. Otherwise it tries to boot from BOOT partition and fails
+
 * Copy the contents to BOOT and ROOTFS directly
 
 * If there is tar file we can use the above approach.The other approach is using disk image writer For .img downloaded from beaglebone website. .xz file should changes to .img using unxz image_name. Go to the .img file directory and open using "open with other applications" and select "disk image writer". In that, destination should be SD card and click on start restoring. You might get some warning related to partition size, need not to worry and proceed with restoring. Now it will format the SD card, and take the ROOTFS partition size on its own and copy the contents of .img to ROOTFS. This will have the ROOTFS partition and contents. Now to get BOOTFS partition, click on + icon at the bottom and give partition size(1 GB) and name(label/BOOT). This will create BOOT partition.Now copy the contents to BOOT ex: https://github.com/niekiran/EmbeddedLinuxBBB/tree/master/pre-built-images/SD-boot
